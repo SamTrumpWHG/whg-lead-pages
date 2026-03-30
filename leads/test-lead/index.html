@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>New Land Opportunity â 6100 Washington Blvd, Arlington VA</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
+
+    .header { background: #1a1a2e; color: white; padding: 32px 24px; text-align: center; }
+    .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .header .subtitle { font-size: 16px; color: #a0a0b8; }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+
+    .card { background: white; border-radius: 12px; padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .card h2 { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; border-bottom: 2px solid #e8e8f0; padding-bottom: 8px; }
+
+    .property-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+    .property-grid .item { display: flex; flex-direction: column; }
+    .property-grid .label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .property-grid .value { font-size: 16px; font-weight: 500; color: #222; }
+    .property-grid .value.highlight { color: #2563eb; font-weight: 700; }
+
+    .image-section { text-align: center; margin: 16px 0; }
+    .image-section img { max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0; cursor: pointer; transition: opacity 0.15s; }
+    .image-section img:hover { opacity: 0.9; }
+    .image-section .caption { font-size: 13px; color: #888; margin-top: 8px; }
+
+    .disclaimer { background: #f8f8fc; border: 1px solid #e0e0e8; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #666; margin-top: 12px; font-style: italic; }
+
+    .comp-table-wrapper { overflow-x: auto; margin-top: 12px; }
+    .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .comp-table th { background: #f8f8fc; padding: 10px; text-align: left; font-weight: 600; color: #555; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e0e0e8; white-space: nowrap; }
+    .comp-table td { padding: 10px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+    .comp-table tr:hover { background: #fafafe; }
+    .comp-table .price { font-weight: 600; color: #059669; }
+    .comp-table .status-closed { color: #059669; font-weight: 600; }
+    .comp-table .status-active { color: #2563eb; font-weight: 600; }
+
+    .range-bar-container { margin: 20px 0; }
+    .range-bar { position: relative; height: 48px; background: linear-gradient(to right, #fecaca, #fef3c7, #d1fae5); border-radius: 24px; margin: 16px 0; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+    .range-label-left { font-size: 13px; font-weight: 700; color: #991b1b; }
+    .range-label-right { font-size: 13px; font-weight: 700; color: #065f46; }
+    .range-value { position: absolute; left: 50%; transform: translateX(-50%); top: -28px; font-size: 22px; font-weight: 700; color: #1a1a2e; white-space: nowrap; }
+    .range-factors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+    .range-factors .conservative { font-size: 13px; color: #991b1b; }
+    .range-factors .optimistic { font-size: 13px; color: #065f46; text-align: right; }
+    .range-factors ul { list-style: none; padding: 0; margin-top: 4px; }
+    .range-factors li { padding: 2px 0; }
+    .range-factors li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .conservative li::before { background: #fca5a5; }
+    .optimistic li::before { background: #6ee7b7; }
+
+    .response-section { text-align: center; padding: 32px 24px; }
+    .response-section h2 { font-size: 20px; margin-bottom: 8px; color: #1a1a2e; }
+    .response-section p { color: #666; margin-bottom: 24px; font-size: 15px; }
+    .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 14px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; text-align: center; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .btn-accept { background: #059669; color: white; }
+    .btn-time { background: #d97706; color: white; }
+    .btn-pass { background: #dc2626; color: white; }
+
+    .footer { text-align: center; padding: 24px; color: #999; font-size: 13px; }
+
+    .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .gallery-item { position: relative; }
+    .gallery-item img { width: 100%; border-radius: 8px; border: 1px solid #e0e0e0; cursor: pointer; transition: opacity 0.15s; }
+    .gallery-item img:hover { opacity: 0.85; }
+    .gallery-item .caption { text-align: center; font-size: 13px; color: #888; margin-top: 6px; }
+
+    .lightbox-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; cursor: zoom-out; }
+    .lightbox-overlay.active { display: flex; }
+    .lightbox-overlay img { max-width: 92%; max-height: 92%; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+    .lightbox-close { position: absolute; top: 16px; right: 24px; color: white; font-size: 32px; cursor: pointer; font-weight: 300; line-height: 1; }
+
+    /* Placeholder for images that haven't loaded */
+    .img-placeholder { background: #e8e8f0; border: 2px dashed #c0c0d0; border-radius: 8px; padding: 40px 20px; text-align: center; color: #888; font-size: 14px; }
+
+    @media (max-width: 600px) {
+      .property-grid { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr; }
+      .btn-group { flex-direction: column; align-items: center; }
+      .btn { width: 85%; }
+      .range-factors { grid-template-columns: 1fr; }
+      .range-factors .optimistic { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>6100 Washington Blvd</h1>
+    <div class="subtitle">Arlington, VA 22205</div>
+  </div>
+
+  <div class="container">
+
+    <!-- Property Overview -->
+    <div class="card">
+      <h2>Property Overview</h2>
+      <div class="property-grid">
+        <div class="item">
+          <span class="label">Lot Size</span>
+          <span class="value">8,945 sqft (0.21 ac)</span>
+        </div>
+        <div class="item">
+          <span class="label">Zoning</span>
+          <span class="value">R-6 (Arlington County)</span>
+        </div>
+        <div class="item">
+          <span class="label">Utilities</span>
+          <span class="value">Water / Sewer / Gas</span>
+        </div>
+        <div class="item">
+          <span class="label">Lot Position</span>
+          <span class="value">Corner (Washington Blvd &amp; N Ohio St)</span>
+        </div>
+        <div class="item">
+          <span class="label">Topography</span>
+          <span class="value">Gentle slope (4-6%), rises front to back</span>
+        </div>
+        <div class="item">
+          <span class="label">Flood / RPA</span>
+          <span class="value">None identified</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buildable Footprint -->
+    <div class="card">
+      <h2>Buildable Footprint</h2>
+      <div class="property-grid" style="margin-bottom: 16px;">
+        <div class="item">
+          <span class="label">Buildable Area</span>
+          <span class="value highlight">~3,375 sqft (38% of lot)</span>
+        </div>
+        <div class="item">
+          <span class="label">Practical First-Floor Plate</span>
+          <span class="value highlight">~2,600-3,000 sqft</span>
+        </div>
+      </div>
+      <div class="image-section">
+        <div class="img-placeholder">Buildable footprint diagram<br><small>(Image will be added when lead is routed)</small></div>
+      </div>
+      <div class="disclaimer">
+        Buildable footprint is a courtesy estimate only and may not reflect all applicable zoning conditions, easements, or site-specific constraints. Please verify all setbacks, zoning requirements, and buildability through your own due diligence.
+      </div>
+    </div>
+
+    <!-- Comps -->
+    <div class="card">
+      <h2>Recent New Construction Comps</h2>
+      <p style="font-size: 14px; color: #666; margin-bottom: 12px;">Within 0.5 miles &middot; New construction 2024-2026</p>
+      <div class="comp-table-wrapper">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Builder</th>
+              <th>Status</th>
+              <th>Price</th>
+              <th>Fin. SqFt</th>
+              <th>Beds/Baths</th>
+              <th>Dist.</th>
+              <th>Closed</th>
+              <th>DOM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2136 22nd St N</td>
+              <td>Brush Arbor</td>
+              <td><span class="status-closed">Closed</span></td>
+              <td class="price">$2,795,000</td>
+              <td>5,800</td>
+              <td>6/6.5</td>
+              <td>0.3 mi</td>
+              <td>Mar 2026</td>
+              <td>62</td>
+            </tr>
+            <tr>
+              <td>6238 22nd St N</td>
+              <td>Classic Cottages</td>
+              <td><span class="status-closed">Closed</span></td>
+              <td class="price">$2,249,500</td>
+              <td>4,200</td>
+              <td>6/6.5</td>
+              <td>0.2 mi</td>
+              <td>Mar 2026</td>
+              <td>28</td>
+            </tr>
+            <tr>
+              <td>2249 N Madison St</td>
+              <td>Madison Homes</td>
+              <td><span class="status-closed">Closed</span></td>
+              <td class="price">$2,302,808</td>
+              <td>5,400</td>
+              <td>5/5.5</td>
+              <td>0.4 mi</td>
+              <td>Dec 2025</td>
+              <td>91</td>
+            </tr>
+            <tr>
+              <td>5810 20th Rd N</td>
+              <td>Westlight Homes</td>
+              <td><span class="status-closed">Closed</span></td>
+              <td class="price">$2,221,966</td>
+              <td>4,600</td>
+              <td>5/6</td>
+              <td>0.3 mi</td>
+              <td>Jan 2025</td>
+              <td>45</td>
+            </tr>
+            <tr>
+              <td>6242 22nd Rd N</td>
+              <td>Classic Cottages</td>
+              <td><span class="status-closed">Closed</span></td>
+              <td class="price">$1,848,000</td>
+              <td>4,100</td>
+              <td>5/4</td>
+              <td>0.1 mi</td>
+              <td>May 2025</td>
+              <td>55</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Outsale Estimate -->
+    <div class="card">
+      <h2>Outsale Estimate</h2>
+      <div class="range-bar-container">
+        <div class="range-bar">
+          <span class="range-value">$1.85M - $2.25M</span>
+          <span class="range-label-left">Conservative</span>
+          <span class="range-label-right">Optimistic</span>
+        </div>
+        <div class="range-factors">
+          <div class="conservative">
+            <strong>Limiting factors</strong>
+            <ul>
+              <li>Corner lot discount (5-10%)</li>
+              <li>Washington Blvd road noise</li>
+              <li>Setback ambiguity</li>
+            </ul>
+          </div>
+          <div class="optimistic">
+            <strong>Upside factors</strong>
+            <ul>
+              <li>Strong comps ($2.0M-$2.8M)</li>
+              <li>Good lot size (8,945 sqft)</li>
+              <li>Walkable to Westover</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Response Buttons -->
+    <div class="card response-section">
+      <h2>How would you like to proceed?</h2>
+      <p>Please let us know within the next 48 hours.</p>
+      <div class="btn-group">
+        <a href="https://hooks.zapier.com/hooks/catch/25609825/ufbjn4n/?lead_id=TEST_RECORD" class="btn btn-accept">I'm Interested</a>
+        <a href="https://hooks.zapier.com/hooks/catch/25609825/uf39wot/?lead_id=TEST_RECORD" class="btn btn-time">Need More Time</a>
+        <a href="https://hooks.zapier.com/hooks/catch/25609825/uf394vf/?lead_id=TEST_RECORD" class="btn btn-pass">Not Interested</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Confidential &mdash; intended for the named recipient only. Please do not forward.
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="Full size view">
+  </div>
+
+  <script>
+    function openLightbox(imgEl) {
+      var overlay = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lightbox-img');
+      lbImg.src = imgEl.src;
+      lbImg.alt = imgEl.alt;
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+
+</body>
+</html>
