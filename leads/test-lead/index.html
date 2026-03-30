@@ -39,6 +39,10 @@
     .comp-table .price { font-weight: 600; color: #059669; }
     .comp-table .status-closed { color: #059669; font-weight: 600; }
     .comp-table .status-active { color: #2563eb; font-weight: 600; }
+    .comp-table .status-coming-soon { color: #7c3aed; font-weight: 600; }
+    .comp-table .status-pending { color: #d97706; font-weight: 600; }
+    .comp-table .link-icon { font-size: 12px; text-decoration: none; color: #6b7280; transition: color 0.15s; }
+    .comp-table .link-icon:hover { color: #2563eb; }
 
     .range-bar-container { margin: 20px 0; }
     .range-bar { position: relative; height: 48px; background: linear-gradient(to right, #fecaca, #fef3c7, #d1fae5); border-radius: 24px; margin: 16px 0; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
@@ -144,17 +148,37 @@
         </div>
       </div>
       <div class="image-section">
-        <div class="img-placeholder">Buildable footprint diagram<br><small>(Image will be added when lead is routed)</small></div>
+        <img src="img/buildable-footprint.png" alt="Buildable footprint diagram â 6100 Washington Blvd" onclick="openLightbox(this)">
+        <div class="caption">Buildable envelope with setbacks (click to enlarge)</div>
       </div>
       <div class="disclaimer">
         Buildable footprint is a courtesy estimate only and may not reflect all applicable zoning conditions, easements, or site-specific constraints. Please verify all setbacks, zoning requirements, and buildability through your own due diligence.
       </div>
     </div>
 
+    <!-- Property Images -->
+    <div class="card">
+      <h2>Property Images</h2>
+      <div class="gallery">
+        <div class="gallery-item">
+          <img src="img/gis-aerial.png" alt="GIS aerial view â 6100 Washington Blvd" onclick="openLightbox(this)">
+          <div class="caption">GIS Aerial View</div>
+        </div>
+        <div class="gallery-item">
+          <img src="img/location-map.png" alt="Google Maps location â 6100 Washington Blvd" onclick="openLightbox(this)">
+          <div class="caption">Location &amp; Surroundings</div>
+        </div>
+        <div class="gallery-item">
+          <img src="img/tax-record.png" alt="Tax record â 6100 Washington Blvd" onclick="openLightbox(this)">
+          <div class="caption">Tax Record</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Comps -->
     <div class="card">
       <h2>Recent New Construction Comps</h2>
-      <p style="font-size: 14px; color: #666; margin-bottom: 12px;">Within 0.5 miles &middot; New construction 2024-2026</p>
+      <p style="font-size: 14px; color: #666; margin-bottom: 12px;">Within 0.5 miles &middot; New construction 2024&ndash;2026 &middot; Sorted by distance</p>
       <div class="comp-table-wrapper">
         <table class="comp-table">
           <thead>
@@ -166,21 +190,23 @@
               <th>Fin. SqFt</th>
               <th>Beds/Baths</th>
               <th>Dist.</th>
-              <th>Closed</th>
+              <th>Date</th>
               <th>DOM</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>2136 22nd St N</td>
-              <td>Brush Arbor</td>
+              <td>6242 22nd Rd N</td>
+              <td>Classic Cottages</td>
               <td><span class="status-closed">Closed</span></td>
-              <td class="price">$2,795,000</td>
-              <td>5,800</td>
-              <td>6/6.5</td>
-              <td>0.3 mi</td>
-              <td>Mar 2026</td>
-              <td>62</td>
+              <td class="price">$1,848,000</td>
+              <td>4,100</td>
+              <td>5/4</td>
+              <td>0.1 mi</td>
+              <td>May 2025</td>
+              <td>55</td>
+              <td><a class="link-icon" href="https://www.zillow.com/homes/6242-22nd-Rd-N-Arlington-VA_rb/" target="_blank" title="View on Zillow">&#x1F517;</a></td>
             </tr>
             <tr>
               <td>6238 22nd St N</td>
@@ -192,17 +218,31 @@
               <td>0.2 mi</td>
               <td>Mar 2026</td>
               <td>28</td>
+              <td><a class="link-icon" href="https://www.zillow.com/homes/6238-22nd-St-N-Arlington-VA_rb/" target="_blank" title="View on Zillow">&#x1F517;</a></td>
             </tr>
             <tr>
-              <td>2249 N Madison St</td>
-              <td>Madison Homes</td>
+              <td>6220 N Washington Blvd</td>
+              <td>Westlight Homes</td>
+              <td><span class="status-active">Active</span></td>
+              <td class="price">$2,395,000</td>
+              <td>5,100</td>
+              <td>6/6.5</td>
+              <td>0.2 mi</td>
+              <td>Listed Mar 2026</td>
+              <td>14</td>
+              <td><a class="link-icon" href="https://www.zillow.com/homes/6220-N-Washington-Blvd-Arlington-VA_rb/" target="_blank" title="View on Zillow">&#x1F517;</a></td>
+            </tr>
+            <tr>
+              <td>2136 22nd St N</td>
+              <td>Brush Arbor</td>
               <td><span class="status-closed">Closed</span></td>
-              <td class="price">$2,302,808</td>
-              <td>5,400</td>
-              <td>5/5.5</td>
-              <td>0.4 mi</td>
-              <td>Dec 2025</td>
-              <td>91</td>
+              <td class="price">$2,795,000</td>
+              <td>5,800</td>
+              <td>6/6.5</td>
+              <td>0.3 mi</td>
+              <td>Mar 2026</td>
+              <td>62</td>
+              <td><a class="link-icon" href="https://www.zillow.com/homes/2136-22nd-St-N-Arlington-VA_rb/" target="_blank" title="View on Zillow">&#x1F517;</a></td>
             </tr>
             <tr>
               <td>5810 20th Rd N</td>
@@ -214,17 +254,31 @@
               <td>0.3 mi</td>
               <td>Jan 2025</td>
               <td>45</td>
+              <td><a class="link-icon" href="https://www.zillow.com/homes/5810-20th-Rd-N-Arlington-VA_rb/" target="_blank" title="View on Zillow">&#x1F517;</a></td>
             </tr>
             <tr>
-              <td>6242 22nd Rd N</td>
-              <td>Classic Cottages</td>
+              <td>2249 N Madison St</td>
+              <td>Madison Homes</td>
               <td><span class="status-closed">Closed</span></td>
-              <td class="price">$1,848,000</td>
-              <td>4,100</td>
-              <td>5/4</td>
-              <td>0.1 mi</td>
-              <td>May 2025</td>
-              <td>55</td>
+              <td class="price">$2,302,808</td>
+              <td>5,400</td>
+              <td>5/5.5</td>
+              <td>0.4 mi</td>
+              <td>Dec 2025</td>
+              <td>91</td>
+              <td><a class="link-icon" href="https://www.zillow.com/homes/2249-N-Madison-St-Arlington-VA_rb/" target="_blank" title="View on Zillow">&#x1F517;</a></td>
+            </tr>
+            <tr>
+              <td>2118 N Woodrow St</td>
+              <td>Brush Arbor</td>
+              <td><span class="status-coming-soon">Coming Soon</span></td>
+              <td class="price">$2,650,000</td>
+              <td>5,500</td>
+              <td>6/6.5</td>
+              <td>0.5 mi</td>
+              <td>Est. May 2026</td>
+              <td>&mdash;</td>
+              <td><a class="link-icon" href="https://www.zillow.com/homes/2118-N-Woodrow-St-Arlington-VA_rb/" target="_blank" title="View on Zillow">&#x1F517;</a></td>
             </tr>
           </tbody>
         </table>
