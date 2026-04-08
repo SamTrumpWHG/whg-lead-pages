@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Response Recorded</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; min-height: 100vh; }
+
+    .container { max-width: 640px; margin: 0 auto; padding: 48px 16px 32px; }
+
+    .card { background: white; border-radius: 12px; padding: 32px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+    .response-icon { width: 64px; height: 64px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+    .response-icon svg { width: 32px; height: 32px; color: #d97706; }
+
+    .page-title { font-size: 22px; font-weight: 700; color: #1a1a2e; text-align: center; margin-bottom: 20px; }
+
+    .property-badge { display: inline-flex; align-items: center; gap: 8px; background: #f0f0ff; border: 1px solid #d0d0e8; border-radius: 8px; padding: 10px 16px; font-size: 14px; font-weight: 600; color: #1a1a2e; margin-bottom: 24px; width: 100%; justify-content: center; }
+    .property-badge svg { width: 16px; height: 16px; color: #6366f1; flex-shrink: 0; }
+
+    .divider { height: 1px; background: #e8e8f0; margin: 24px 0; }
+
+    .decision-section { text-align: center; margin-bottom: 20px; }
+    .decision-section h3 { font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 6px; }
+    .decision-section p { font-size: 14px; color: #777; margin-bottom: 16px; }
+
+    .decision-buttons { display: flex; gap: 12px; margin-bottom: 20px; }
+    .btn-accept { display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1; padding: 16px 24px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: none; background: #059669; color: white; }
+    .btn-accept:hover { background: #047857; }
+    .btn-accept:disabled { background: #999; cursor: not-allowed; }
+    .btn-accept svg { width: 20px; height: 20px; }
+    .btn-pass { display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1; padding: 16px 24px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: white; color: #dc2626; border: 2px solid #fca5a5; }
+    .btn-pass:hover { background: #fef2f2; border-color: #dc2626; }
+    .btn-pass:disabled { background: #f5f5f5; color: #999; border-color: #ddd; cursor: not-allowed; }
+    .btn-pass svg { width: 20px; height: 20px; }
+
+    .message-label { font-size: 15px; font-weight: 600; color: #555; margin-bottom: 10px; }
+    .message-box { width: 100%; min-height: 100px; border: 1px solid #d0d0d8; border-radius: 8px; padding: 12px 16px; font-family: inherit; font-size: 15px; color: #333; resize: vertical; transition: border-color 0.2s; }
+    .message-box:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+    .message-box::placeholder { color: #aaa; }
+
+    .btn-row { display: flex; gap: 12px; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: 1; padding: 14px 24px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; text-decoration: none; }
+    .btn-primary { background: #1a1a2e; color: white; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-primary:disabled { background: #999; cursor: not-allowed; }
+    .btn-secondary { background: white; color: #1a1a2e; border: 1px solid #d0d0d8; }
+    .btn-secondary:hover { background: #f5f5f8; }
+
+    .success-toast { display: none; background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #065f46; text-align: center; margin-top: 16px; }
+    .success-toast.show { display: block; }
+
+    .hint { text-align: center; margin-top: 16px; font-size: 13px; color: #999; }
+
+    /* Post-decision states */
+    .decision-result { display: none; text-align: center; margin-bottom: 20px; }
+    .decision-result.show { display: block; }
+    .result-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+    .result-icon.green { background: #d1fae5; }
+    .result-icon.green svg { color: #059669; }
+    .result-icon.neutral { background: #f0f0ff; }
+    .result-icon.neutral svg { color: #6366f1; }
+    .result-icon svg { width: 28px; height: 28px; }
+    .result-title { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+    .result-message { font-size: 14px; color: #555; }
+
+    .footer { text-align: center; padding: 24px 16px; font-size: 12px; color: #999; }
+
+    @media (max-width: 480px) {
+      .container { padding: 32px 12px 24px; }
+      .card { padding: 24px 20px; }
+      .page-title { font-size: 20px; }
+      .decision-buttons { flex-direction: column; }
+      .btn-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card">
+      <div class="response-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+
+      <div class="page-title" id="mainTitle">No problem. This lead is still yours until <span id="deadlineInline">loading...</span></div>
+
+      <div class="property-badge" id="propertyBadge">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+        <span id="propertyAddress">Loading property...</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Decision section: Accept or Pass right here -->
+      <div id="decisionSection">
+        <div class="decision-section">
+          <h3>Ready to decide now?</h3>
+          <p>You can accept or pass right here — no need to go back to your email.</p>
+        </div>
+
+        <div class="message-label">Before you click, feel free to add anything additional that you'd like Sam to know:</div>
+        <textarea class="message-box" id="builderMessage" placeholder="Optional"></textarea>
+
+        <div class="decision-buttons" style="margin-top: 20px;">
+          <button class="btn-accept" id="acceptBtn" onclick="submitDecision('accept')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+            I'm Interested
+          </button>
+          <button class="btn-pass" id="passBtn" onclick="submitDecision('pass')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            Pass
+          </button>
+        </div>
+
+        <div class="hint">Or close this page to keep thinking — the lead stays yours until the deadline above.</div>
+      </div>
+
+      <!-- Post-decision: Accepted -->
+      <div class="decision-result" id="acceptedResult">
+        <div class="result-icon green">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+        </div>
+        <div class="result-title">Thanks! Sam will be in touch shortly to discuss next steps.</div>
+      </div>
+
+      <!-- Post-decision: Passed -->
+      <div class="decision-result" id="passedResult">
+        <div class="result-icon neutral">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
+        </div>
+        <div class="result-title">Got it. Thanks for letting us know. We appreciate your consideration.</div>
+        <div class="result-message">If you change your mind, please do not hesitate to reach out.</div>
+      </div>
+
+      <!-- Lead page link (always visible) -->
+      <div style="text-align: center; margin-top: 24px;">
+        <a href="#" id="leadPageLink" style="color: #6366f1; font-size: 14px; font-weight: 500; text-decoration: none;">View full property details</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    This lead page and response system is managed by Sam Trump.
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const leadId = params.get('lead_id') || '';
+    const builderId = params.get('builder_id') || '';
+    const address = params.get('address') || '';
+    const leadPageUrl = params.get('lead_page') || '';
+    const deadline = params.get('deadline') || '';
+
+    if (address) {
+      document.getElementById('propertyAddress').textContent = decodeURIComponent(address);
+    } else {
+      document.getElementById('propertyBadge').style.display = 'none';
+    }
+
+    if (deadline) {
+      document.getElementById('deadlineInline').textContent = decodeURIComponent(deadline) + '.';
+    } else {
+      document.getElementById('mainTitle').textContent = 'No problem. This lead is still yours.';
+    }
+
+    if (leadPageUrl) {
+      document.getElementById('leadPageLink').href = decodeURIComponent(leadPageUrl);
+    } else {
+      document.getElementById('leadPageLink').style.display = 'none';
+    }
+
+    // Webhook URLs
+    const ACCEPT_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/ufbjn4n/';
+    const REJECT_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/uf394vf/';
+
+    function submitDecision(decision) {
+      const acceptBtn = document.getElementById('acceptBtn');
+      const passBtn = document.getElementById('passBtn');
+      acceptBtn.disabled = true;
+      passBtn.disabled = true;
+
+      const clickedBtn = decision === 'accept' ? acceptBtn : passBtn;
+      clickedBtn.textContent = 'Submitting...';
+
+      const message = document.getElementById('builderMessage').value.trim();
+      const webhookUrl = decision === 'accept' ? ACCEPT_WEBHOOK : REJECT_WEBHOOK;
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lead_id: leadId,
+          builder_id: builderId,
+          response: decision === 'accept' ? 'Interested' : 'Not Interested',
+          message: message || '',
+          source: 'more-time-page'
+        })
+      })
+      .then(() => showResult(decision))
+      .catch(() => showResult(decision));
+    }
+
+    function showResult(decision) {
+      document.getElementById('decisionSection').style.display = 'none';
+      if (decision === 'accept') {
+        document.getElementById('acceptedResult').classList.add('show');
+      } else {
+        document.getElementById('passedResult').classList.add('show');
+      }
+    }
+  </script>
+
+</body>
+</html>
