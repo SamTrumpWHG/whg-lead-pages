@@ -71,14 +71,14 @@
 
       <div id="messageSection">
         <div class="message-label">If you can, please share your biggest reasons for not being interested:</div>
-        <textarea class="message-box" id="builderMessage" placeholder="Optional — e.g., slope concerns, highway noise, lot too small, price too high..."></textarea>
+        <textarea class="message-box" id="builderMessage" placeholder="Optional â e.g., slope concerns, highway noise, lot too small, price too high..."></textarea>
 
         <div class="btn-row">
           <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">Send</button>
           <a class="btn btn-secondary" id="returnBtn" href="#" onclick="return handleReturn()">Return to Lead Page</a>
         </div>
 
-        <div class="success-toast" id="successToast">Feedback sent! Thanks for sharing — this helps us send you better-fit leads.</div>
+        <div class="success-toast" id="successToast">Feedback sent! Thanks for sharing â this helps us send you better-fit leads.</div>
       </div>
     </div>
   </div>
@@ -105,7 +105,7 @@
       returnBtn.href = decodeURIComponent(leadPageUrl);
     }
 
-    const MESSAGE_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/PLACEHOLDER_MESSAGE_HOOK/';
+    const MESSAGE_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/u79mx8n/';
 
     function sendMessage() {
       const message = document.getElementById('builderMessage').value.trim();
