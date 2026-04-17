@@ -149,12 +149,18 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const leadId = params.get('lead_id') || '';
-    const builderId = params.get('builder_id') || '';
-    const address = params.get('address') || '';
-    const leadPageUrl = params.get('lead_page') || '';
-    const deadline = params.get('deadline') || '';
+    // Custom URL parser: preserves + in values (URLSearchParams decodes + as space)
+    function getParam(name) {
+      var match = window.location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
+      return match ? decodeURIComponent(match[1]) : '';
+    }
+
+    const leadId = getParam('lead_id');
+    const builderEmail = getParam('builder_email');
+    const builderId = getParam('builder_id');
+    const address = getParam('address');
+    const leadPageUrl = getParam('lead_page');
+    const deadline = getParam('deadline');
 
     if (address) {
       document.getElementById('propertyAddress').textContent = decodeURIComponent(address);
@@ -174,7 +180,15 @@
       document.getElementById('leadPageLink').style.display = 'none';
     }
 
-    // Webhook URLs
+    // Fire the More Time Handler webhook on page load
+    const MORE_TIME_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/uf39wot/';
+    if (leadId && builderEmail) {
+      fetch(MORE_TIME_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail), {
+        method: 'POST'
+      }).catch(function() {});
+    }
+
+    // Webhook URLs for accept/pass decisions from this page
     const ACCEPT_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/ufbjn4n/';
     const REJECT_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/uf394vf/';
 
@@ -190,11 +204,12 @@
       const message = document.getElementById('builderMessage').value.trim();
       const webhookUrl = decision === 'accept' ? ACCEPT_WEBHOOK : REJECT_WEBHOOK;
 
-      fetch(webhookUrl, {
+      fetch(webhookUrl + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           lead_id: leadId,
+          builder_email: builderEmail,
           builder_id: builderId,
           response: decision === 'accept' ? 'Interested' : 'Not Interested',
           message: message || '',
