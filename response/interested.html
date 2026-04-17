@@ -86,23 +86,38 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const leadId = params.get('lead_id') || '';
-    const builderId = params.get('builder_id') || '';
-    const address = params.get('address') || '';
-    const leadPageUrl = params.get('lead_page') || '';
+    // Custom URL parser: preserves + in values (URLSearchParams decodes + as space)
+    function getParam(name) {
+      var match = window.location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
+      return match ? decodeURIComponent(match[1]) : '';
+    }
+
+    const leadId = getParam('lead_id');
+    const builderEmail = getParam('builder_email');
+    const builderId = getParam('builder_id');
+    const address = getParam('address');
+    const leadPageUrl = getParam('lead_page');
 
     if (address) {
-      document.getElementById('propertyAddress').textContent = decodeURIComponent(address);
+      document.getElementById('propertyAddress').textContent = address;
     } else {
       document.getElementById('propertyBadge').style.display = 'none';
     }
 
     const returnBtn = document.getElementById('returnBtn');
     if (leadPageUrl) {
-      returnBtn.href = decodeURIComponent(leadPageUrl);
+      returnBtn.href = leadPageUrl;
     }
 
+    // Fire the Interested Handler webhook on page load
+    const INTERESTED_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/ufbjn4n/';
+    if (leadId && builderEmail) {
+      fetch(INTERESTED_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail), {
+        method: 'POST'
+      }).catch(function() {});
+    }
+
+    // Optional follow-up message webhook
     const MESSAGE_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/u79mx8n/';
 
     function sendMessage() {
@@ -123,6 +138,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           lead_id: leadId,
+          builder_email: builderEmail,
           builder_id: builderId,
           response: 'Interested',
           message: message
@@ -140,7 +156,7 @@
 
     function handleReturn() {
       if (leadPageUrl) {
-        window.location.href = decodeURIComponent(leadPageUrl);
+        window.location.href = leadPageUrl;
       }
       return false;
     }
