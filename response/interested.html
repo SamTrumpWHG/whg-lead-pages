@@ -112,7 +112,7 @@
     // Fire the Interested Handler webhook on page load
     const INTERESTED_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/ufbjn4n/';
     if (leadId && builderEmail) {
-      fetch(INTERESTED_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail), {
+      fetch(INTERESTED_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail) + '&address=' + encodeURIComponent(address) + '&lead_page=' + encodeURIComponent(leadPageUrl), {
         method: 'POST'
       }).catch(function() {});
     }
@@ -133,19 +133,20 @@
       btn.disabled = true;
       btn.textContent = 'Sending...';
 
-      fetch(MESSAGE_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lead_id: leadId,
-          builder_email: builderEmail,
-          builder_id: builderId,
-          response: 'Interested',
-          message: message
-        })
-      })
-      .then(() => showSuccess())
-      .catch(() => showSuccess());
+      // Use querystring params (not JSON body) for consistency with other landing-page
+      // webhook fires and to avoid CORS preflight. Matches Message Handler Zap's
+      // Querystring-based step chips.
+      const params = new URLSearchParams({
+        lead_id: leadId,
+        builder_email: builderEmail,
+        builder_id: builderId,
+        response: 'Interested',
+        address: address,
+        message: message
+      });
+      fetch(MESSAGE_WEBHOOK + '?' + params.toString(), { method: 'POST' })
+        .then(() => showSuccess())
+        .catch(() => showSuccess());
     }
 
     function showSuccess() {
