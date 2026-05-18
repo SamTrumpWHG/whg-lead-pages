@@ -71,14 +71,14 @@
 
       <div id="messageSection">
         <div class="message-label">If you can, please share your biggest reasons for not being interested:</div>
-        <textarea class="message-box" id="builderMessage" placeholder="Optional — e.g., slope concerns, highway noise, lot too small, price too high..."></textarea>
+        <textarea class="message-box" id="builderMessage" placeholder="Optional â e.g., slope concerns, highway noise, lot too small, price too high..."></textarea>
 
         <div class="btn-row">
           <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">Send</button>
           <a class="btn btn-secondary" id="returnBtn" href="#" onclick="return handleReturn()">Return to Lead Page</a>
         </div>
 
-        <div class="success-toast" id="successToast">Feedback sent! Thanks for sharing — this helps us send you better-fit leads.</div>
+        <div class="success-toast" id="successToast">Feedback sent! Thanks for sharing â this helps us send you better-fit leads.</div>
       </div>
     </div>
   </div>
@@ -114,7 +114,7 @@
     // Fire the Reject Handler webhook on page load
     const REJECT_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/uf394vf/';
     if (leadId && builderEmail) {
-      fetch(REJECT_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail), {
+      fetch(REJECT_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail) + '&address=' + encodeURIComponent(address) + '&lead_page=' + encodeURIComponent(leadPageUrl), {
         method: 'POST'
       }).catch(function() {});
     }
@@ -135,19 +135,20 @@
       btn.disabled = true;
       btn.textContent = 'Sending...';
 
-      fetch(MESSAGE_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lead_id: leadId,
-          builder_email: builderEmail,
-          builder_id: builderId,
-          response: 'Not Interested',
-          message: message
-        })
-      })
-      .then(() => showSuccess())
-      .catch(() => showSuccess());
+      // Use querystring params (not JSON body) for consistency with other landing-page
+      // webhook fires and to avoid CORS preflight. Matches Message Handler Zap's
+      // Querystring-based step chips.
+      const params = new URLSearchParams({
+        lead_id: leadId,
+        builder_email: builderEmail,
+        builder_id: builderId,
+        response: 'Not Interested',
+        address: address,
+        message: message
+      });
+      fetch(MESSAGE_WEBHOOK + '?' + params.toString(), { method: 'POST' })
+        .then(() => showSuccess())
+        .catch(() => showSuccess());
     }
 
     function showSuccess() {
