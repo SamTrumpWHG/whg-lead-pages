@@ -109,12 +109,19 @@
       returnBtn.href = leadPageUrl;
     }
 
-    // Fire the Interested Handler webhook on page load
+    // Fire the Interested Handler webhook on page load — guarded by localStorage idempotency
+    // so a reload doesn't re-fire (would otherwise create duplicate interested events).
+    // Key: lr_responded_<leadId>_<builderEmail>. Per-browser only; acceptable for the
+    // realistic reload case. A different browser/device would still re-fire.
     const INTERESTED_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/ufbjn4n/';
-    if (leadId && builderEmail) {
+    const idempotencyKey = 'lr_responded_' + leadId + '_' + builderEmail;
+    let alreadyResponded = false;
+    try { alreadyResponded = !!localStorage.getItem(idempotencyKey); } catch (e) {}
+    if (leadId && builderEmail && !alreadyResponded) {
       fetch(INTERESTED_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail) + '&address=' + encodeURIComponent(address) + '&lead_page=' + encodeURIComponent(leadPageUrl), {
         method: 'POST'
       }).catch(function() {});
+      try { localStorage.setItem(idempotencyKey, 'interested|' + new Date().toISOString()); } catch (e) {}
     }
 
     // Optional follow-up message webhook
@@ -129,7 +136,7 @@
         return;
       }
 
-      const btn = document.getElementById('sendBtn');
+      const btn = document.getElementById('builderMessage');
       btn.disabled = true;
       btn.textContent = 'Sending...';
 
