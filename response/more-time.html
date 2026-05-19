@@ -180,12 +180,19 @@
       document.getElementById('leadPageLink').style.display = 'none';
     }
 
-    // Fire the More Time Handler webhook on page load
+    // Fire the More Time Handler webhook on page load — guarded by localStorage idempotency
+    // so a reload doesn't re-fire (would otherwise create duplicate more-time events).
+    // Key: lr_responded_<leadId>_<builderEmail>. Per-browser only; acceptable for the
+    // realistic reload case. A different browser/device would still re-fire.
     const MORE_TIME_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/25609825/uf39wot/';
-    if (leadId && builderEmail) {
+    const idempotencyKey = 'lr_responded_' + leadId + '_' + builderEmail;
+    let alreadyResponded = false;
+    try { alreadyResponded = !!localStorage.getItem(idempotencyKey); } catch (e) {}
+    if (leadId && builderEmail && !alreadyResponded) {
       fetch(MORE_TIME_WEBHOOK + '?lead_id=' + encodeURIComponent(leadId) + '&builder_email=' + encodeURIComponent(builderEmail), {
         method: 'POST'
       }).catch(function() {});
+      try { localStorage.setItem(idempotencyKey, 'more-time|' + new Date().toISOString()); } catch (e) {}
     }
 
     // Webhook URLs for accept/pass decisions from this page
