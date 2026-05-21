@@ -151,7 +151,7 @@
         '<div class="card error-card"><h2>Could not load dashboard</h2><p>' + escapeHtml(msg) + '</p></div>';
     }
 
-    var STATE = { all: [], filter: 'all' };
+    var STATE = { all: [], filter: 'all', builderEmail: '' };
 
     function renderStats(leads) {
       var total = leads.length;
@@ -177,7 +177,16 @@
       }
       return leads.map(function(l) {
         var lead = l.lead || {};
-        var leadUrl = l.lead_id ? (LEAD_PAGE_BASE + '?lead_id=' + encodeURIComponent(l.lead_id)) : '';
+        var leadUrl = '';
+        if (l.lead_id) {
+          leadUrl = LEAD_PAGE_BASE + '?lead_id=' + encodeURIComponent(l.lead_id);
+          // Carry builder identity so the lead page can show working response
+          // buttons when opened from the dashboard (not just from the email).
+          if (STATE.builderEmail) {
+            leadUrl += '&builder_email=' + encodeURIComponent(STATE.builderEmail) +
+                       '&address=' + encodeURIComponent(lead.address || '');
+          }
+        }
         var addrHtml = leadUrl
           ? '<a href="' + escapeHtml(leadUrl) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">' + escapeHtml(lead.address || '(no address)') + '</a>'
           : escapeHtml(lead.address || '(no address)');
@@ -231,6 +240,7 @@
       var b = data.builder || {};
       var leads = data.leads || [];
       STATE.all = leads;
+      STATE.builderEmail = b.email || '';
 
       var html =
         '<div class="card header-card">' +
