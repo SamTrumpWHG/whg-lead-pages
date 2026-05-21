@@ -66,6 +66,18 @@
     .btn-secondary:hover { background: #f5f5f8; }
     .btn svg { width: 16px; height: 16px; }
 
+    /* Response actions (Interested / More Time / Pass) */
+    .respond-card { background: white; }
+    .respond-card .respond-prompt { font-size: 14px; color: #555; margin-bottom: 14px; }
+    .response-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .resp-btn { flex: 1 1 150px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 18px; border-radius: 8px; font-size: 15px; font-weight: 700; text-decoration: none; color: #fff; transition: filter 0.15s, transform 0.15s; }
+    .resp-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .resp-interested { background: #16a34a; }
+    .resp-moretime { background: #f59e0b; }
+    .resp-pass { background: #dc2626; }
+    .resp-btn svg { width: 18px; height: 18px; }
+    @media (max-width: 480px) { .response-actions { flex-direction: column; } }
+
     .empty-state { color: #999; font-style: italic; font-size: 14px; padding: 8px 0; }
 
     .loading { text-align: center; padding: 48px 16px; color: #777; }
@@ -105,6 +117,45 @@
     function getParam(name) {
       var match = window.location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
       return match ? decodeURIComponent(match[1]) : '';
+    }
+
+    // ---- Response actions ----------------------------------------------
+    // Builder identity comes in on the URL (set by the dispatch email button
+    // and by the builder dashboard links). When present, we show Interested /
+    // More Time / Pass buttons that route to the existing response pages,
+    // which fire the handler webhooks (with their own localStorage idempotency
+    // guard). When absent (anonymous view), the buttons are hidden.
+    var RESPONSE_BASE = 'https://samtrumpwhg.github.io/whg-lead-pages/response/';
+    var BUILDER_EMAIL = getParam('builder_email');
+    var BUILDER_ID = getParam('builder_id');
+    var URL_ADDRESS = getParam('address');
+
+    function respLink(page, leadId, address) {
+      return RESPONSE_BASE + page +
+        '?lead_id=' + encodeURIComponent(leadId) +
+        '&builder_email=' + encodeURIComponent(BUILDER_EMAIL) +
+        (BUILDER_ID ? '&builder_id=' + encodeURIComponent(BUILDER_ID) : '') +
+        '&address=' + encodeURIComponent(address || '') +
+        '&lead_page=' + encodeURIComponent(window.location.href);
+    }
+
+    function responseCard(leadId, address, position) {
+      if (!BUILDER_EMAIL || !leadId) return '';
+      var heading = position === 'top'
+        ? '<h2>Respond to This Opportunity</h2>'
+        : '<h2>Ready to Respond?</h2>';
+      var prompt = position === 'top'
+        ? 'Review the details below, then let us know where you stand.'
+        : 'Let us know where you stand on this opportunity.';
+      return '<div class="card respond-card">' +
+        heading +
+        '<div class="respond-prompt">' + prompt + '</div>' +
+        '<div class="response-actions">' +
+          '<a class="resp-btn resp-interested" href="' + respLink('interested.html', leadId, address) + '">Interested</a>' +
+          '<a class="resp-btn resp-moretime" href="' + respLink('more-time.html', leadId, address) + '">Need More Time</a>' +
+          '<a class="resp-btn resp-pass" href="' + respLink('not-interested.html', leadId, address) + '">Pass</a>' +
+        '</div>' +
+      '</div>';
     }
 
     function escapeHtml(s) {
@@ -245,7 +296,12 @@
           'Open Documents Folder</a></div>'
         : '';
 
-      root.innerHTML = hero + summary + expectations + comps + buildable + plat + schools + docs;
+      var leadId = getParam('lead_id');
+      var addrForLinks = lead.address || URL_ADDRESS;
+      var respTop = responseCard(leadId, addrForLinks, 'top');
+      var respBottom = responseCard(leadId, addrForLinks, 'bottom');
+
+      root.innerHTML = hero + respTop + summary + expectations + comps + buildable + plat + schools + docs + respBottom;
 
       // Make all links from markdown open in new tab
       root.querySelectorAll('.prose a').forEach(function(a) {
