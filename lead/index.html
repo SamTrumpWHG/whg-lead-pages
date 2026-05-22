@@ -55,12 +55,12 @@
     .prose tr:hover td { background: #fafafd; }
     .prose code { background: #f0f0ff; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
 
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .two-col .card { margin-bottom: 0; }
 
     /* Comps — single sortable table with two-tier header */
     .comps-card .prose { overflow-x: auto; }
-    .comps-card table { min-width: 640px; }
+    .comps-card table { min-width: 760px; }
     .comps-card th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
     .comps-card th.sortable:hover { background: #ececf4; }
     .comps-card th.group { text-align: center; background: #eef0f7; color: #1a1a2e; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; cursor: default; border-bottom: 1px solid #dcdce8; }
@@ -346,16 +346,21 @@
         td.innerHTML = '<a href="' + escapeHtml(gmapsUrl(loc)) + '" target="_blank" rel="noopener">' + escapeHtml(raw) + '</a>';
       });
 
-      // 2) If this is the 10-column comp schema, add the Teardown / New Construction group header row.
+      // 2) Add the Teardown / New Construction group header row. Positions are derived from
+      //    the headers ("Lot SF" starts Teardown; "Builder" starts New Construction), so the
+      //    table can carry extra leading columns (e.g. Status) without breaking the grouping.
       var headRow = table.tHead ? table.tHead.rows[0] : null;
-      if (headRow && headRow.cells.length === 10) {
-        var headers = Array.prototype.slice.call(headRow.cells).map(function(c) { return (c.textContent || '').toLowerCase(); });
-        if (headers.indexOf('builder') >= 0 && headers.join(' ').indexOf('spec') >= 0) {
+      if (headRow) {
+        var headers = Array.prototype.slice.call(headRow.cells).map(function(c) { return (c.textContent || '').trim().toLowerCase(); });
+        var lotIdx = headers.indexOf('lot sf');
+        var builderIdx = headers.indexOf('builder');
+        if (lotIdx >= 0 && builderIdx > lotIdx) {
           var group = document.createElement('tr');
-          group.innerHTML =
-            '<th class="group"></th>' +
-            '<th class="group" colspan="3">Teardown</th>' +
-            '<th class="group" colspan="6">New Construction</th>';
+          var ghtml = '';
+          for (var gi = 0; gi < lotIdx; gi++) ghtml += '<th class="group"></th>';
+          ghtml += '<th class="group" colspan="' + (builderIdx - lotIdx) + '">Teardown</th>';
+          ghtml += '<th class="group" colspan="' + (headers.length - builderIdx) + '">New Construction</th>';
+          group.innerHTML = ghtml;
           table.tHead.insertBefore(group, headRow);
         }
       }
