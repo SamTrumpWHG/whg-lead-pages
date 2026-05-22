@@ -58,13 +58,14 @@
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .two-col .card { margin-bottom: 0; }
 
-    /* Comps tabs */
-    .tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; border-bottom: 1px solid #e8e8f0; }
-    .tab-btn { padding: 9px 15px; font-size: 13px; font-weight: 600; color: #6b6b7b; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
-    .tab-btn:hover { color: #1a1a2e; }
-    .tab-btn.active { color: #1a1a2e; border-bottom-color: #6366f1; }
-    .comps-panel { display: none; }
-    .comps-panel.active { display: block; }
+    /* Comps — single sortable table with two-tier header */
+    .comps-card .prose { overflow-x: auto; }
+    .comps-card table { min-width: 640px; }
+    .comps-card th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+    .comps-card th.sortable:hover { background: #ececf4; }
+    .comps-card th.group { text-align: center; background: #eef0f7; color: #1a1a2e; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; cursor: default; border-bottom: 1px solid #dcdce8; }
+    .comps-card th .arrow { color: #6366f1; font-size: 10px; margin-left: 3px; }
+    .comps-card td { white-space: nowrap; }
 
     /* Image gallery */
     .img-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
@@ -72,11 +73,6 @@
     .img-gallery a:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
     .img-gallery img { width: 100%; height: auto; display: block; }
     .img-caption { font-size: 12px; padding: 8px 12px; color: #555; border-top: 1px solid #e8e8f0; background: white; }
-
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; text-decoration: none; }
-    .btn-primary { background: #1a1a2e; color: white; }
-    .btn-primary:hover { background: #2d2d4e; }
-    .btn svg { width: 16px; height: 16px; }
 
     /* Response actions (Interested / More Time / Pass) */
     .respond-card { background: white; }
@@ -88,6 +84,9 @@
     .resp-moretime { background: #f59e0b; }
     .resp-pass { background: #dc2626; }
     .resp-btn svg { width: 18px; height: 18px; }
+    .signoff { margin-top: 20px; padding-top: 16px; border-top: 1px solid #eee; font-size: 14px; color: #444; line-height: 1.7; }
+    .signoff .name { font-weight: 700; color: #1a1a2e; }
+    .signoff a { color: #6366f1; text-decoration: none; }
     @media (max-width: 480px) { .response-actions { flex-direction: column; } }
 
     .empty-state { color: #999; font-style: italic; font-size: 14px; padding: 8px 0; }
@@ -147,14 +146,22 @@
         '&lead_page=' + encodeURIComponent(window.location.href);
     }
 
+    function signoffBlock() {
+      return '<div class="signoff">Thank you,<br><br>' +
+        '<span class="name">Sam Trump</span><br>' +
+        '<a href="tel:+17035944957">703.594.4957</a><br>' +
+        '<a href="mailto:sam@watsonhomesgroup.com">sam@watsonhomesgroup.com</a>' +
+        '</div>';
+    }
+
     function responseCard(leadId, address, position) {
       if (!BUILDER_EMAIL || !leadId) return '';
       var heading = position === 'top'
         ? '<h2>Respond to This Opportunity</h2>'
         : '<h2>Ready to Respond?</h2>';
       var prompt = position === 'top'
-        ? 'Review the details below, then let us know where you stand.'
-        : 'Let us know where you stand on this opportunity.';
+        ? 'Review the details below, then please let me know if you are interested.'
+        : 'Please let me know if you are interested.';
       return '<div class="card respond-card">' +
         heading +
         '<div class="respond-prompt">' + prompt + '</div>' +
@@ -163,6 +170,7 @@
           '<a class="resp-btn resp-moretime" href="' + respLink('more-time.html', leadId, address) + '">Need More Time</a>' +
           '<a class="resp-btn resp-pass" href="' + respLink('not-interested.html', leadId, address) + '">Pass</a>' +
         '</div>' +
+        (position === 'bottom' ? signoffBlock() : '') +
       '</div>';
     }
 
@@ -272,83 +280,95 @@
       return '<div class="card hero"><div class="hero-grid">' + addrCol + mapCol + '</div></div>';
     }
 
-    // ---- Comps with tab groups + Redfin links -------------------------
-    function parseSections(md) {
-      var lines = md.split('\n');
-      var sections = [];
-      var cur = null;
-      lines.forEach(function(line) {
-        var m = line.match(/^\s{0,3}#{1,6}\s+(.*)$/);
-        if (m) {
-          cur = { title: m[1].trim(), body: '' };
-          sections.push(cur);
-        } else {
-          if (!cur) { cur = { title: null, body: '' }; sections.push(cur); }
-          cur.body += line + '\n';
-        }
-      });
-      return sections.filter(function(s) { return (s.body && s.body.trim()) || s.title; });
-    }
-
+    // ---- Comps: single sortable table ---------------------------------
     function renderCompsCard(md) {
       if (!md) return '';
-      var sections = parseSections(md);
-      var hasTabs = sections.length > 1 && sections.some(function(s) { return s.title; });
-      var inner;
-      if (hasTabs) {
-        var btns = sections.map(function(s, i) {
-          return '<button class="tab-btn' + (i === 0 ? ' active' : '') + '" data-tab="' + i + '">' +
-            escapeHtml(s.title || ('Group ' + (i + 1))) + '</button>';
-        }).join('');
-        var panels = sections.map(function(s, i) {
-          return '<div class="comps-panel' + (i === 0 ? ' active' : '') + '" data-panel="' + i + '">' +
-            mdParse(s.body) + '</div>';
-        }).join('');
-        inner = '<div class="tabs">' + btns + '</div>' + panels;
-      } else {
-        var body = sections.map(function(s) { return (s.title ? '### ' + s.title + '\n' : '') + s.body; }).join('\n');
-        inner = '<div class="comps-panel active">' + mdParse(body) + '</div>';
-      }
-      return '<div class="card comps-card"><h2>Comps</h2><div class="prose">' + inner + '</div></div>';
+      return '<div class="card comps-card"><h2>Comps</h2><div class="prose">' + mdParse(md) + '</div></div>';
     }
 
-    function buildRedfinUrl(streetRaw, lead) {
-      var street = streetRaw.replace(/\(.*?\)/g, '').trim();
-      if (!street) return '';
-      function dash(s) { return s.replace(/\./g, '').replace(/,/g, '').trim().replace(/\s+/g, '-'); }
-      var state = (lead.state || '').trim();
-      var city = (lead.city || '').trim();
-      var zip = (lead.zip || '').trim();
-      if (state && city && zip) {
-        return 'https://www.redfin.com/' + dash(state) + '/' + dash(city) + '/' + dash(street) + '-' + dash(zip) + '/home';
+    function gmapsUrl(addr) {
+      return 'https://www.google.com/maps?q=' + encodeURIComponent(addr);
+    }
+
+    // Numeric/date/string sort key for a cell's text
+    function cellSortKey(text) {
+      var t = (text || '').trim();
+      if (t === '' || t === '—' || t === '-') return { empty: true, n: 0, s: '' };
+      var dm = t.match(/^(\d{1,2})\/(?:(\d{1,2})\/)?(\d{4})$/);
+      if (dm) { return { empty: false, n: (+dm[3]) * 10000 + (+dm[1]) * 100 + (dm[2] ? +dm[2] : 0), s: t }; }
+      var mm = t.match(/\$?\s*([\d.]+)\s*[Mm]\b/);
+      if (mm) return { empty: false, n: parseFloat(mm[1]) * 1e6, s: t };
+      var num = t.replace(/[$,]/g, '');
+      if (/^-?\d+(\.\d+)?$/.test(num)) return { empty: false, n: parseFloat(num), s: t };
+      return { empty: false, n: NaN, s: t.toLowerCase() };
+    }
+
+    function makeSortable(table) {
+      var headerRow = table.tHead ? table.tHead.rows[table.tHead.rows.length - 1] : null;
+      if (!headerRow) return;
+      var ths = Array.prototype.slice.call(headerRow.cells);
+      var dir = {};
+      ths.forEach(function(th, idx) {
+        th.classList.add('sortable');
+        th.addEventListener('click', function() {
+          var asc = !(dir[idx] === 'asc');
+          dir = {}; dir[idx] = asc ? 'asc' : 'desc';
+          ths.forEach(function(h) { var a = h.querySelector('.arrow'); if (a) a.remove(); });
+          th.insertAdjacentHTML('beforeend', '<span class="arrow">' + (asc ? '▲' : '▼') + '</span>');
+          var tbody = table.tBodies[0];
+          var rows = Array.prototype.slice.call(tbody.rows);
+          rows.sort(function(a, b) {
+            var ka = cellSortKey(a.cells[idx] ? a.cells[idx].textContent : '');
+            var kb = cellSortKey(b.cells[idx] ? b.cells[idx].textContent : '');
+            if (ka.empty && kb.empty) return 0;
+            if (ka.empty) return 1;   // blanks always last
+            if (kb.empty) return -1;
+            if (isFinite(ka.n) && isFinite(kb.n)) return asc ? ka.n - kb.n : kb.n - ka.n;
+            return asc ? ka.s.localeCompare(kb.s) : kb.s.localeCompare(ka.s);
+          });
+          rows.forEach(function(r) { tbody.appendChild(r); });
+        });
+      });
+    }
+
+    function enhanceCompsTable(table, lead) {
+      // 1) Link the first column (address). Leave existing links (e.g. Redfin from
+      //    the markdown); otherwise fall back to a Google Maps link.
+      var bodyRows = table.tBodies[0] ? Array.prototype.slice.call(table.tBodies[0].rows) : [];
+      bodyRows.forEach(function(tr) {
+        var td = tr.cells[0];
+        if (!td) return;
+        if (td.querySelector('a')) return; // already linked (Redfin)
+        var raw = (td.textContent || '').trim();
+        if (!raw) return;
+        var addrForMap = raw.replace(/\(.*?\)/g, '').trim();
+        var loc = [addrForMap, lead.city, lead.state, lead.zip].filter(Boolean).join(', ');
+        td.innerHTML = '<a href="' + escapeHtml(gmapsUrl(loc)) + '" target="_blank" rel="noopener">' + escapeHtml(raw) + '</a>';
+      });
+
+      // 2) If this is the 10-column comp schema, add the Teardown / New Construction group header row.
+      var headRow = table.tHead ? table.tHead.rows[0] : null;
+      if (headRow && headRow.cells.length === 10) {
+        var headers = Array.prototype.slice.call(headRow.cells).map(function(c) { return (c.textContent || '').toLowerCase(); });
+        if (headers.indexOf('builder') >= 0 && headers.join(' ').indexOf('spec') >= 0) {
+          var group = document.createElement('tr');
+          group.innerHTML =
+            '<th class="group"></th>' +
+            '<th class="group" colspan="3">Teardown</th>' +
+            '<th class="group" colspan="6">New Construction</th>';
+          table.tHead.insertBefore(group, headRow);
+        }
       }
-      if (zip) return 'https://www.redfin.com/zipcode/' + encodeURIComponent(zip);
-      return '';
+
+      // 3) Make columns sortable.
+      makeSortable(table);
     }
 
     function wireCompsCard(lead) {
       var card = document.querySelector('.comps-card');
       if (!card) return;
-      // Tab switching
-      card.querySelectorAll('.tab-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var idx = btn.getAttribute('data-tab');
-          card.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b === btn); });
-          card.querySelectorAll('.comps-panel').forEach(function(p) {
-            p.classList.toggle('active', p.getAttribute('data-panel') === idx);
-          });
-        });
-      });
-      // Redfin links on the first column of every comps table row
-      card.querySelectorAll('table tbody tr').forEach(function(tr) {
-        var td = tr.querySelector('td');
-        if (!td) return;
-        var raw = (td.textContent || '').trim();
-        if (!raw) return;
-        var url = buildRedfinUrl(raw, lead);
-        if (url) {
-          td.innerHTML = '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + escapeHtml(raw) + '</a>';
-        }
+      Array.prototype.slice.call(card.querySelectorAll('table')).forEach(function(t) {
+        enhanceCompsTable(t, lead);
       });
     }
 
@@ -377,8 +397,7 @@
         : expectationsParts.join('');
 
       var schools = lead.school_zones_info
-        ? '<div class="card"><h2>School Pyramid</h2><div class="prose">' +
-          escapeHtml(lead.school_zones_info).replace(/\n/g, '<br>') + '</div></div>'
+        ? '<div class="card"><h2>School Pyramid</h2>' + renderMarkdown(lead.school_zones_info) + '</div>'
         : '';
 
       var comps = renderCompsCard(lead.comps_markdown);
@@ -400,7 +419,7 @@
 
       root.innerHTML = hero + respTop + summary + expectations + schools + comps + imagesRow + respBottom;
 
-      // Wire up comps tabs + Redfin links
+      // Wire up comps (links + group header + sorting)
       wireCompsCard(lead);
 
       // Make all links from markdown open in new tab
